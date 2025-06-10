@@ -3,7 +3,7 @@ name: Backend CI/CD
 on:
   push:
     branches: [main, develop]
-    paths: ["backend-backend/**", ".github/workflows/backend-ci.yml"]
+    paths: ["viatab-backend/**", ".github/workflows/backend-ci.yml"]
   pull_request:
     branches: [main]
     paths: ["viatab-backend/**"]
@@ -42,11 +42,24 @@ jobs:
           distribution: "temurin"
 
       - name: Cache Maven dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+
+      - name: Verify backend directory
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Directory contents:"
+          ls -la
+          echo "Backend directory exists: $(test -d viatab-backend && echo 'yes' || echo 'no')"
+          if [ -d viatab-backend ]; then
+            echo "Backend directory contents:"
+            ls -la viatab-backend/
+            echo "pom.xml exists: $(test -f viatab-backend/pom.xml && echo 'yes' || echo 'no')"
+            echo "mvnw exists: $(test -f viatab-backend/mvnw && echo 'yes' || echo 'no')"
+          fi
 
       - name: Run tests
         working-directory: ./viatab-backend
