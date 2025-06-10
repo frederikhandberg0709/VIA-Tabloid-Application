@@ -72,7 +72,7 @@ jobs:
       - name: Build Docker image
         if: github.ref == 'refs/heads/main'
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/viatab-frontend:${{ github.sha }} ./frontend
+          docker build -t ghcr.io/${{ github.repository_owner }}/viatab-frontend:${{ github.sha }} ./viatab-frontend
           docker tag ghcr.io/${{ github.repository_owner }}/viatab-frontend:${{ github.sha }} ghcr.io/${{ github.repository_owner }}/viatab-frontend:latest
 
       - name: Login to GitHub Container Registry
