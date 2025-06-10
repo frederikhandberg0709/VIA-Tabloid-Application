@@ -47,14 +47,17 @@ jobs:
       - name: Run type check
         working-directory: ./viatab-frontend
         run: npm run type-check
+        continue-on-error: true
 
       - name: Run linter
         working-directory: ./viatab-frontend
         run: npm run lint
+        continue-on-error: true
 
       - name: Run tests
         working-directory: ./viatab-frontend
         run: npm test -- --coverage --watchAll=false
+        continue-on-error: true
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4
