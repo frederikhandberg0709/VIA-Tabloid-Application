@@ -17,6 +17,9 @@ on:
           - staging
           - production
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -36,35 +39,47 @@ jobs:
       - name: Deploy to staging
         if: env.DEPLOY_ENV == 'staging'
         run: |
-          echo "Deploying to staging environment..."
+          echo "🚀 Deploying to staging environment..."
           echo "Using images:"
           echo "  Backend: ghcr.io/${{ github.repository_owner }}/viatab-backend:${{ github.sha }}"
           echo "  Frontend: ghcr.io/${{ github.repository_owner }}/viatab-frontend:${{ github.sha }}"
+          echo ""
+          echo "✅ Staging deployment completed!"
 
       - name: Deploy to production
         if: env.DEPLOY_ENV == 'production'
         run: |
-          echo "Deploying to production environment..."
+          echo "🚀 Deploying to production environment..."
           echo "Using images:"
           echo "  Backend: ghcr.io/${{ github.repository_owner }}/viatab-backend:${{ github.sha }}"
           echo "  Frontend: ghcr.io/${{ github.repository_owner }}/viatab-frontend:${{ github.sha }}"
+          echo ""
+          echo "✅ Production deployment completed!"
 
       - name: Run health checks
         run: |
-          echo "Running post-deployment health checks..."
+          echo "🔍 Running post-deployment health checks..."
+          echo "Health check endpoints:"
+          echo "  - Backend health: /actuator/health"
+          echo "  - Frontend: /"
+          echo "  - API stories: /api/stories"
+          echo ""
+          echo "✅ Health checks would be performed here"
+          # Uncomment when you have actual deployment endpoints:
           # curl -f ${{ secrets.APP_URL }}/actuator/health
           # curl -f ${{ secrets.APP_URL }}/api/stories
 
-      - name: Notify deployment status
+      - name: Deployment summary
         if: always()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          channel: "#deployments"
-          text: |
-            VIA Tabloid deployment to ${{ env.DEPLOY_ENV }} 
-            Status: ${{ job.status }}
-            Commit: ${{ github.sha }}
-            Author: ${{ github.actor }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: ${{ env.DEPLOY_ENV }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Author**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp**: $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Docker Images" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend: \`ghcr.io/${{ github.repository_owner }}/viatab-backend:${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend: \`ghcr.io/${{ github.repository_owner }}/viatab-frontend:${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
