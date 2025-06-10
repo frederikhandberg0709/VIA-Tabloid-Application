@@ -137,10 +137,18 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>3.5.0</version>
 				<configuration>
-					<configLocation>checkstyle.xml</configLocation>
+					<configLocation>google_checks.xml</configLocation>
 					<includeTestSourceDirectory>true</includeTestSourceDirectory>
 					<failOnViolation>false</failOnViolation>
+					<violationSeverity>warning</violationSeverity>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>10.18.1</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
