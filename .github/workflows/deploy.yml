@@ -9,69 +9,62 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment to deploy to'
+        description: "Environment to deploy to"
         required: true
-        default: 'staging'
+        default: "staging"
         type: choice
         options:
-        - staging
-        - production
+          - staging
+          - production
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
-    
+
     environment: ${{ github.event.inputs.environment || 'staging' }}
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Setup deployment environment
-      run: |
-        echo "DEPLOY_ENV=${{ github.event.inputs.environment || 'staging' }}" >> $GITHUB_ENV
-        echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
-    
-    - name: Deploy to staging
-      if: env.DEPLOY_ENV == 'staging'
-      run: |
-        echo "Deploying to staging environment..."
-        # Add your staging deployment commands here
-        # Examples:
-        # - Deploy to staging Kubernetes cluster
-        # - Update staging Docker Compose
-        # - Run staging health checks
-    
-    - name: Deploy to production
-      if: env.DEPLOY_ENV == 'production'
-      run: |
-        echo "Deploying to production environment..."
-        # Add your production deployment commands here
-        # Examples:
-        # - Deploy to production Kubernetes cluster
-        # - Update production Docker Compose
-        # - Run production health checks
-        # - Send deployment notifications
-    
-    - name: Run health checks
-      run: |
-        echo "Running post-deployment health checks..."
-        # Add health check commands
-        # curl -f ${{ secrets.APP_URL }}/actuator/health
-        # curl -f ${{ secrets.APP_URL }}/api/stories
-    
-    - name: Notify deployment status
-      if: always()
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        channel: '#deployments'
-        text: |
-          VIA Tabloid deployment to ${{ env.DEPLOY_ENV }} 
-          Status: ${{ job.status }}
-          Commit: ${{ github.sha }}
-          Author: ${{ github.actor }}
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup deployment environment
+        run: |
+          echo "DEPLOY_ENV=${{ github.event.inputs.environment || 'staging' }}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+
+      - name: Deploy to staging
+        if: env.DEPLOY_ENV == 'staging'
+        run: |
+          echo "Deploying to staging environment..."
+          echo "Using images:"
+          echo "  Backend: ghcr.io/${{ github.repository_owner }}/viatab-backend:${{ github.sha }}"
+          echo "  Frontend: ghcr.io/${{ github.repository_owner }}/viatab-frontend:${{ github.sha }}"
+
+      - name: Deploy to production
+        if: env.DEPLOY_ENV == 'production'
+        run: |
+          echo "Deploying to production environment..."
+          echo "Using images:"
+          echo "  Backend: ghcr.io/${{ github.repository_owner }}/viatab-backend:${{ github.sha }}"
+          echo "  Frontend: ghcr.io/${{ github.repository_owner }}/viatab-frontend:${{ github.sha }}"
+
+      - name: Run health checks
+        run: |
+          echo "Running post-deployment health checks..."
+          # curl -f ${{ secrets.APP_URL }}/actuator/health
+          # curl -f ${{ secrets.APP_URL }}/api/stories
+
+      - name: Notify deployment status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: "#deployments"
+          text: |
+            VIA Tabloid deployment to ${{ env.DEPLOY_ENV }} 
+            Status: ${{ job.status }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
