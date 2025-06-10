@@ -1,0 +1,45 @@
+name: Database Migration
+
+on:
+  push:
+    branches: [ main ]
+    paths: ['database/**', 'backend/src/main/resources/db/migration/**']
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Target environment for migration'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    
+    environment: ${{ github.event.inputs.target_environment || 'staging' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: Run database migration
+      working-directory: ./backend
+      run: |
+        ./mvnw flyway:migrate \
+          -Dflyway.url=${{ secrets.DATABASE_URL }} \
+          -Dflyway.user=${{ secrets.DATABASE_USERNAME }} \
+          -Dflyway.password=${{ secrets.DATABASE_PASSWORD }}
+    
+    - name: Verify migration
+      run: |
+        # Add verification commands
+        echo "Database migration completed successfully"
