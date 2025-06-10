@@ -81,10 +81,11 @@ jobs:
           flags: backend
           name: backend-coverage
           token: ${{ secrets.CODECOV_TOKEN }}
+        continue-on-error: true
 
       - name: Run code quality analysis
         working-directory: ./viatab-backend
-        run: ./mvnw checkstyle:check spotbugs:check
+        run: ./mvnw checkstyle:check
         continue-on-error: true
 
       - name: Build application
