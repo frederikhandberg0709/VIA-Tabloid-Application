@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: viatab
+data:
+  POSTGRES_DB: viatab
+  POSTGRES_USER: viatab_user
