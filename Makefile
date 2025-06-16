@@ -144,7 +144,7 @@ clean:
 	cd viatab-frontend && rm -rf .next node_modules/.cache 2>/dev/null || true
 	@echo "✅ Build artifacts cleaned!"
 
-install
+install:
 	@echo "📦 Installing dependencies..."
 	@echo "Installing backend dependencies..."
 	cd viatab-backend && ./mvnw dependency:resolve
