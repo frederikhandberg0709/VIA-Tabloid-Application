@@ -28,6 +28,14 @@ docker-run: # Start application with Docker Compose
 	@echo "🔗 Backend: http://localhost:8080"
 	@echo "🗄️ Database: localhost:5432"
 
+docker-dev:
+	@echo "🔨 Starting VIA Tabloid in development mode (building from source)..."
+	docker-compose up -d
+	@echo "✅ Application started!"
+	@echo "🌐 Frontend: http://localhost:3000"
+	@echo "🔗 Backend: http://localhost:8080"
+	@echo "🗄️ Database: localhost:5432"
+
 docker-stop: # Stop Docker Compose application
 	@echo "🛑 Stopping Docker Compose..."
 	docker-compose -f docker-compose.local.yml down

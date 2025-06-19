@@ -17,7 +17,7 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./viatab-backend
       dockerfile: Dockerfile
     container_name: viatab-backend
     environment:
@@ -32,11 +32,11 @@ services:
     networks:
       - viatab-network
     volumes:
-      - ./backend/logs:/app/logs
+      - ./viatab-backend/logs:/app/logs
 
   frontend:
     build:
-      context: ./frontend
+      context: ./viatab-frontend
       dockerfile: Dockerfile
     container_name: viatab-frontend
     environment:
